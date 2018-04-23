@@ -315,9 +315,14 @@ class CornersProblem(search.SearchProblem):
         "*** YOUR CODE HERE ***"
         if 0 in self.startState[1]:
             return False
-        else if self.startingPosition == state.pos:
-            return True
+        x,y = state[0]
+        x1,y1 = self.startingPosition
+        if(x == x1 and y==y1):
+        	return True
         return False
+
+            
+        
 
         #util.raiseNotDefined()
 
@@ -342,6 +347,20 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+            x,y = state[0]
+
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            cost = 1;
+            hitsWall = self.walls[nextx][nexty]
+            if(not hitsWall):
+            	estadoSig = (nextx, nexty)
+            	from copy import deepcopy 
+            	esquinas_visitadas = deepcopy(state[1])
+            	if(estadoSig in self.corners):
+            		pos = self.corners.index(estadoSig)
+            		esquinas_visitadas[pos] = 1;
+            	successors.append(( (estadoSig, esquinas_visitadas), action, cost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
