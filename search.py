@@ -101,7 +101,7 @@ def depthFirstSearch(problem):
 		
 		sucesores=problem.getSuccessors(estado)
 		for sucesor in sucesores:
-			if sucesor[0] not in visitados and sucesor not in frontera.list:
+			if sucesor[0] not in visitados:
 				frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
 				visitados.append(sucesor[0])
 	return camino
@@ -124,10 +124,79 @@ def breadthFirstSearch(problem):
 		
 		sucesores=problem.getSuccessors(estado)
 		for sucesor in sucesores:
-			if sucesor[0] not in visitados and sucesor not in frontera.list:
+			if sucesor[0] not in visitados:
 				frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
 				visitados.append(sucesor[0])
 	return camino
+
+'''def recursiveDLS(nodo, problem, limitee):
+	(estado, camino, costo) = nodo
+	#print estado[0] , estado[1] , limitee
+	if problem.isGoalState(estado):
+		return camino
+	elif limitee == 0:
+		return [0]
+	else:
+		interrumpio = False	
+		sucesores=problem.getSuccessors(estado)
+		for sucesor in sucesores:
+			hijo = (sucesor[0], camino + [sucesor[1]], costo + sucesor[2])
+			resultado = recursiveDLS(hijo, problem, limitee-1)
+			if resultado == [0]:
+				interrumpio = True
+			elif(resultado != [-1]):
+				return resultado
+		if interrumpio:
+			return [0]
+		else:
+			return [-1]
+
+def depthLimiteedSearch(problem, limitee):
+	return recursiveDLS((problem.getStartState(),[],0), problem, limitee); 
+
+
+def iterativeDeepeningSearch(problem):
+	"""This function is for the first of the grad students questions"""
+	"*** MY CODE HERE ***"
+
+	limitee = 1
+	while True:
+		print limitee
+		resultado = depthLimiteedSearch(problem, limitee)
+		#print resultado
+		if resultado != [0]:
+			return resultado
+		limitee +=1'''
+
+def iterativeDeepeningSearch(problem):
+	"*** MY CODE HERE ***"
+	from game import Directions
+
+	frontera = util.Stack()
+	limite = 1;
+
+	while True: 
+		visitados = []
+		estadoInicial = problem.getStartState()
+		frontera.push((estadoInicial,[],0))
+		(estado, camino, costo) = frontera.pop()
+		visitados.append(estado)
+		while not problem.isGoalState(estado): 
+			successors = problem.getSuccessors(estado) 
+			for sucesor in successors:
+				if (not sucesor[0] in visitados) and (costo + sucesor[2] <= limite):
+					frontera.push((sucesor[0],camino + [sucesor[1]],costo + sucesor[2]))
+					visitados.append(sucesor[0])
+
+			if frontera.isEmpty():
+				break
+
+			(estado,camino,costo) = frontera.pop()
+
+		if problem.isGoalState(estado):
+			return camino
+
+		limite += 1
 
 def BidirectionalSearch(problem):
 	util.raiseNotDefined()
@@ -189,3 +258,4 @@ bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
+it = iterativeDeepeningSearch
