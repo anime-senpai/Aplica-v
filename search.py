@@ -89,19 +89,21 @@ def depthFirstSearch(problem):
 	"*** YOUR CODE HERE ***"
 
 	frontera = util.Stack()
-	estadoInicial= problem.getStartState() 
-	frontera.push((estadoInicial, [],0)) 
+	estadoInicial= problem.getStartState()
+	frontera.push((estadoInicial, [],0))
 	visitados=[]
+	visitados.append(estadoInicial)
 	
 	while not(frontera.isEmpty()):
-		estado, camino, costo =frontera.pop()
+		(estado, camino, costo) =frontera.pop()
 		if(problem.isGoalState(estado)):
 			break
-		visitados.append(estado)
+		
 		sucesores=problem.getSuccessors(estado)
 		for sucesor in sucesores:
 			if sucesor[0] not in visitados and sucesor not in frontera.list:
 				frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
+				visitados.append(sucesor[0])
 	return camino
 
 def breadthFirstSearch(problem):
