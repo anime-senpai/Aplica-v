@@ -285,7 +285,7 @@ class ClassicGameRules:
         """
         Checks to see whether it is time to end the game.
         """
-        if self.initialState.getPacmanPosition() == state.getPacmanPosition():
+        if state.getNumFood()==0 and self.initialState.getPacmanPosition() == state.getPacmanPosition():
             self.win(state, game)
         if state.isLose(): self.lose(state, game)
 
