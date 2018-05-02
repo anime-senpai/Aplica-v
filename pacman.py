@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -285,7 +285,8 @@ class ClassicGameRules:
         """
         Checks to see whether it is time to end the game.
         """
-        if state.isWin(): self.win(state, game)
+        if self.initialState.getPacmanPosition() == state.getPacmanPosition():
+            self.win(state, game)
         if state.isLose(): self.lose(state, game)
 
     def win( self, state, game ):
@@ -368,7 +369,7 @@ class PacmanRules:
             numFood = state.getNumFood()
             if numFood == 0 and not state.data._lose:
                 state.data.scoreChange += 500
-                state.data._win = True
+                #state.data._win = True
         # Eat capsule
         if( position in state.getCapsules() ):
             state.data.capsules.remove( position )
@@ -656,12 +657,12 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
 
     if (numGames-numTraining) > 0:
         scores = [game.state.getScore() for game in games]
-        wins = [game.state.isWin() for game in games]
-        winRate = wins.count(True)/ float(len(wins))
+        loses = [game.state.isLose() for game in games]
+        winRate = loses.count(False)/ float(len(loses))
         print 'Average Score:', sum(scores) / float(len(scores))
         print 'Scores:       ', ', '.join([str(score) for score in scores])
-        print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
-        print 'Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins])
+        print 'Win Rate:      %d/%d (%.2f)' % (loses.count(False), len(loses), winRate)
+        print 'Record:       ', ', '.join([ ['Win', 'Loss'][int(w)] for w in loses])
 
     return games
 

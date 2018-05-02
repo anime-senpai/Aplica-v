@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -288,16 +288,11 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-
-        self._visitados = {}
-        self._lista_visitados = []
-        esquinas_visitadas = [0, 0, 0, 0]
-
-        if self.startingPosition in self.corners:
-            pos = self.corners.index(self.startingPosition)
-            esquinas_visitadas[pos] = 1;
-
-        self.startState = (self.startingPosition, esquinas_visitadas)
+        self.costFn = lambda x,y: 1
+        # initialized corner visited state
+        self.cornerVisited=[False,False,False,False,False]
+        # define a state as (position,corner visited list)
+        self.startState=(self.startingPosition,self.cornerVisited)
 
     def getStartState(self):
         """
@@ -305,26 +300,17 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return self.startState
-        #util.raiseNotDefined()
+        return self.startState # self.startState=(self.startingPosition,self.cornerVisited)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        if 0 in self.startState[1]:
-            return False
-        x,y = state[0]
-        x1,y1 = self.startingPosition
-        if(x == x1 and y==y1):
-        	return True
+        cornerVisited = state[1]
+        if cornerVisited == [True,True,True,True,True]:
+            return True
         return False
-
-            
-        
-
-        #util.raiseNotDefined()
 
     def getSuccessors(self, state):
         """
@@ -336,7 +322,6 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
@@ -347,20 +332,30 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+            # current state
             x,y = state[0]
-
-            dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
-            cost = 1;
-            hitsWall = self.walls[nextx][nexty]
-            if(not hitsWall):
-            	estadoSig = (nextx, nexty)
-            	from copy import deepcopy 
-            	esquinas_visitadas = deepcopy(state[1])
-            	if(estadoSig in self.corners):
-            		pos = self.corners.index(estadoSig)
-            		esquinas_visitadas[pos] = 1;
-            	successors.append(( (estadoSig, esquinas_visitadas), action, cost))
+            cornerVisited = state[1]
+            # direction
+            dx,dy = Actions.directionToVector(action)
+            # new position
+            x_new,y_new = int(x + dx),int(y + dy)
+            # copy the 'center' point's corner visited list,note this is a deep copy since cornerVisited is a variable
+            cornerVisited_new = cornerVisited[:]
+            isWall = self.walls[x_new][y_new]
+            if not isWall:
+                cornerIndex = 0 # index of each corresponding corner in the corner list
+                # check if on of the corners is visited
+                for corner in self.corners:
+                    if (x_new,y_new) == corner:
+                        break
+                    cornerIndex += 1
+                if cornerIndex < 4: # is in one corner
+                    cornerVisited_new[cornerIndex] = True # update the corner visited list
+                if cornerVisited_new == [True,True,True,True,False] and (x_new,y_new) == self.startingPosition:
+                    cornerVisited_new[4] = True
+                state_new = ((x_new,y_new),cornerVisited_new)
+                cost = self.costFn(x_new,y_new)
+                successors.append((state_new,action,cost)) # add this successor
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -371,12 +366,14 @@ class CornersProblem(search.SearchProblem):
         include an illegal move, return 999999.  This is implemented for you.
         """
         if actions == None: return 999999
-        x,y= self.startingPosition
+        x,y= self.startingPosition # from the starting point
+        cost = 0
         for action in actions:
-            dx, dy = Actions.directionToVector(action)
-            x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]: return 999999
-        return len(actions)
+            dx, dy = Actions.directionToVector(action) # direction of the action
+            x, y = int(x + dx), int(y + dy) # new position
+            if self.walls[x][y]: return 999999 # hit wall
+            cost += self.costFn(x,y) # add the cost on this new position
+        return cost
 
 
 def cornersHeuristic(state, problem):
@@ -396,7 +393,39 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    # Considering the goal is just a state with four corners visited, this Heuristic function simply calculate the total
+    # manhattan distance from the current position to the final state. First calculate the distance between the current
+    # position and the closest corner. Then calculate the distance between the first closest corner and the new closest
+    # corner until it reaches the state with four corners all visited.
+    H = 0
+    position = state[0][:] # deep copy of current position
+    visitedlist = state[1][:] # deep copy of current visited list
+    for i in range(4): # there remains at most 4 corners unvisited, so we need to go for four timrs
+        cornersDistance = [0,0,0,0]
+        cornerIndex = 0
+        # calculate the distance between the current position and each of the corners
+        for corner in visitedlist:
+            cornersDistance[cornerIndex] = util.manhattanDistance(position,corners[cornerIndex])
+            cornerIndex += 1
+
+        closestIndex = 0
+        cornerIndex = 0 # reset to 0
+        for cornerDiatance in cornersDistance:
+            if (visitedlist[closestIndex]): # in case the first corner is visited
+                closestIndex = cornerIndex
+            # check each corner: 1. not been visited 2. distance is less the current closest one => set to be the new closest one
+            if (not visitedlist[cornerIndex]) and (cornerDiatance < cornersDistance[closestIndex]):
+                closestIndex = cornerIndex
+            cornerIndex += 1
+
+        if (not visitedlist[closestIndex]):
+            H += cornersDistance[closestIndex]
+            position = corners[closestIndex][:]
+            visitedlist[closestIndex]=True
+        else:
+            break
+
+    return H
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -490,7 +519,25 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    # For this heuristic function, the goal state is eating out all the food. We search through Astar method. To make it admissible,
+    # we need to guarantee the cost <= actual cost. The function mazeDistance() just returns a distance from one position to the other using
+    # the search method we use in the problem. So we could use this function to get the minimum distance from the current position to any
+    # of the food point. Since we have to go to the farthest food point in order to eat out all of the food, if we use the farthest distance
+    # to be the Heuristc, it will be the minimum actual cost when all the other food points is on the way to the farthest food point. For other
+    # situations, the actual cost would just be more than this one since we need to move away from this way to get another food point. So the
+    # heuristic function is admissible as well as consistent.
+    H = 0
+    maxDistance = 0
+    # find the farthest distance by Astar search using mazeDistance() function.
+    for y in range(foodGrid.height):
+        for x in range(foodGrid.width):
+            if (foodGrid[x][y] == 1) and (mazeDistance(position,(x,y),problem.startingGameState) > maxDistance):
+                maxDistance = mazeDistance(position,(x,y),problem.startingGameState)
+    H = maxDistance
+    return H
+
+
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
