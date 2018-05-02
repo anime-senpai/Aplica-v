@@ -308,9 +308,12 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         cornerVisited = state[1]
+        #print state[0]
+        #print state[1]
         if cornerVisited == [True,True,True,True,True]:
             return True
         return False
+
 
     def getSuccessors(self, state):
         """

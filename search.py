@@ -87,12 +87,8 @@ def depthFirstSearch(problem):
 	print "Start's successors:", problem.getSuccessors(problem.getStartState())
 	"""
 	"*** YOUR CODE HERE ***"
-	util.raiseNotDefined()
 
-def breadthFirstSearch(problem):
-	"""Search the shallowest nodes in the search tree first."""
-	"*** YOUR CODE HERE ***"
-	frontera=util.Queue()
+	frontera = util.Stack()
 	estadoInicial= problem.getStartState() 
 	frontera.push((estadoInicial, [],0)) 
 	visitados=[]
@@ -106,6 +102,29 @@ def breadthFirstSearch(problem):
 		for sucesor in sucesores:
 			if sucesor[0] not in visitados and sucesor not in frontera.list:
 				frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
+	return camino
+
+def breadthFirstSearch(problem):
+	"""Search the shallowest nodes in the search tree first."""
+	"*** YOUR CODE HERE ***"
+	from game import Directions
+
+	frontera=util.Queue()
+	estadoInicial= problem.getStartState()
+	frontera.push((estadoInicial, [],0))
+	visitados=[]
+	visitados.append(estadoInicial)
+	
+	while not(frontera.isEmpty()):
+		(estado, camino, costo) =frontera.pop()
+		if(problem.isGoalState(estado)):
+			break
+		
+		sucesores=problem.getSuccessors(estado)
+		for sucesor in sucesores:
+			if sucesor[0] not in visitados and sucesor not in frontera.list:
+				frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
+				visitados.append(sucesor[0])
 	return camino
 
 def BidirectionalSearch(problem):
