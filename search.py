@@ -238,6 +238,8 @@ def BidirectionalSearch(problem):
 def uniformCostSearch(problem):
 	"""Search the node of least total cost first."""
 	"*** YOUR CODE HERE ***"
+
+
 	util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -250,7 +252,45 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
 	"""Search the node that has the lowest combined cost and heuristic first."""
 	"*** YOUR CODE HERE ***"
-	util.raiseNotDefined()
+
+	frontera=util.PriorityQueue()
+	estadoInicial= problem.getStartState()
+	visitados=[]
+	nodo = []
+	nodo.append(estadoInicial)
+	nodo.append(0)
+	nodo.append(heuristic(estadoInicial,problem))
+	nodo.append([])
+
+	frontera.push(nodo, nodo[1]+nodo[2])
+
+	while not(frontera.isEmpty()):
+
+		nodo = frontera.pop()
+		estado = nodo[0]
+		costo = nodo[1]
+		v = nodo[2]
+		camino = nodo[3]
+
+		if(problem.isGoalState(estado)):
+			break
+		
+		sucesores=problem.getSuccessors(estado)
+		for sucesor in sucesores:
+			if sucesor[0] not in visitados:
+				nodoSuc = []
+				nodoSuc.append(sucesor[0])
+				nodoSuc.append(costo + sucesor[2])
+				nodoSuc.append(heuristic(nodoSuc[0], problem))
+				nodoSuc.append(camino + [sucesor[1]])
+
+				frontera.push(nodoSuc, nodoSuc[1]+nodo[2])
+				#frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
+				visitados.append(sucesor[0])
+	return camino
+
+	#util.raiseNotDefined()
+
 
 
 # Abbreviations
