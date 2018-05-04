@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -93,12 +93,12 @@ def depthFirstSearch(problem):
 	frontera.push((estadoInicial, [],0))
 	visitados=[]
 	visitados.append(estadoInicial)
-	
+
 	while not(frontera.isEmpty()):
 		(estado, camino, costo) =frontera.pop()
 		if(problem.isGoalState(estado)):
 			break
-		
+
 		sucesores=problem.getSuccessors(estado)
 		for sucesor in sucesores:
 			if sucesor[0] not in visitados:
@@ -116,12 +116,12 @@ def breadthFirstSearch(problem):
 	frontera.push((estadoInicial, [],0))
 	visitados=[]
 	visitados.append(estadoInicial)
-	
+
 	while not(frontera.isEmpty()):
 		(estado, camino, costo) =frontera.pop()
 		if(problem.isGoalState(estado)):
 			break
-		
+
 		sucesores=problem.getSuccessors(estado)
 		for sucesor in sucesores:
 			if sucesor[0] not in visitados:
@@ -137,7 +137,7 @@ def breadthFirstSearch(problem):
 	elif limitee == 0:
 		return [0]
 	else:
-		interrumpio = False	
+		interrumpio = False
 		sucesores=problem.getSuccessors(estado)
 		for sucesor in sucesores:
 			hijo = (sucesor[0], camino + [sucesor[1]], costo + sucesor[2])
@@ -152,7 +152,7 @@ def breadthFirstSearch(problem):
 			return [-1]
 
 def depthLimiteedSearch(problem, limitee):
-	return recursiveDLS((problem.getStartState(),[],0), problem, limitee); 
+	return recursiveDLS((problem.getStartState(),[],0), problem, limitee);
 
 
 def iterativeDeepeningSearch(problem):
@@ -175,14 +175,14 @@ def iterativeDeepeningSearch(problem):
 	frontera = util.Stack()
 	limite = 1;
 
-	while True: 
+	while True:
 		visitados = []
 		estadoInicial = problem.getStartState()
 		frontera.push((estadoInicial,[],0))
 		(estado, camino, costo) = frontera.pop()
 		visitados.append(estado)
-		while not problem.isGoalState(estado): 
-			successors = problem.getSuccessors(estado) 
+		while not problem.isGoalState(estado):
+			successors = problem.getSuccessors(estado)
 			for sucesor in successors:
 				if (not sucesor[0] in visitados) and (costo + sucesor[2] <= limite):
 					frontera.push((sucesor[0],camino + [sucesor[1]],costo + sucesor[2]))
@@ -198,42 +198,50 @@ def iterativeDeepeningSearch(problem):
 
 		limite += 1
 
+def inFrontera(e,lista):
+	for i in range(len(lista)):
+		(estado, camino, costo)= lista[i]
+		if e[0]==estado[0] and e[1]==estado[1] :
+			return True
+	return False
+
 def BidirectionalSearch(problem):
-	util.raiseNotDefined()
-'''    fronteraIni=util.Queue()
-	fronteraObj=util.Queue()
-	
-	#(successor,action, stepCost)
-	estadoInicial= (problem.getStartState() 
-	estadoObjetivo = (self.startingPosition, [True,True,True,True,True])
-	
-	fronteraIni.push(estadoInicial)
-	fronteraObj.push(estadoObjetivo) 	
-	
+	from game import Directions
+
+	fronteraIni=util.Queue()
+	estadoInicial= problem.getStartState()
+	fronteraIni.push((estadoInicial, [],0))
 	visitadosIni=[]
+	visitadosIni.append(estadoInicial)
+
+	fronteraObj=util.Queue()
+	estadoObjetivo= (problem.startingPosition,[True,True,True,True,False])
+	fronteraObj.push((estadoObjetivo, [],0))
 	visitadosObj=[]
-	
+	visitadosObj.append(estadoObjetivo)
+
 	while not(fronteraIni.isEmpty()) and not(fronteraObj.isEmpty()):
-		estado=fronteraIni.pop()
-		if(problem.isGoalState(estado) or (estado in fronteraObj.list)):
-			return visitadosIni + visitadosObj.reverse()
-		visitadosIni.append(estado)
+		(estado, camino, costo) =fronteraIni.pop()
+		if(problem.isGoalState(estado) and inFrontera(estado,fronteraObj.list)):
+			break
+
 		sucesores=problem.getSuccessors(estado)
 		for sucesor in sucesores:
-			if sucesor not in visitadosIni and sucesor not in fronteraIni.list:
-				fronteraIni.push(sucesor)
-				
-				
-		estado=fronteraObj.pop()
-		if( (estado[0]== problem.startingPosition and estado[1] == problem.[False,False,False,False,False]) or (estado in fronteraIni.list)):
-			return visitadosIni + visitadosObj.reverse()
-		visitadosObj.append(estado)
-		sucesores=problem.getSuccessors(estado)
+			if sucesor[0] not in visitadosIni and sucesor not in fronteraIni.list:
+				fronteraIni.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
+				visitadosIni.append(sucesor[0])
+
+		(estado, camino, costo) =fronteraObj.pop()
+		if(estado[0]== problem.startingPosition and estado[1]==[False,False,False,False,False]) and inFrontera(estado,fronteraIni.list):
+			break
+
+		sucesores=problem.getSuccessors2(estado)
 		for sucesor in sucesores:
-			if sucesor not in visitadosObj and sucesor not in fronteraObj.list:
-				visitadosObj.push(sucesor)
-				
-	return []'''
+			if sucesor[0] not in visitadosObj and sucesor not in fronteraObj.list:
+				fronteraObj.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
+				visitadosObj.append(sucesor[0])
+
+	return camino
 
 def uniformCostSearch(problem):
 	"""Search the node of least total cost first."""
@@ -274,7 +282,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
 		if(problem.isGoalState(estado)):
 			break
-		
+
 		sucesores=problem.getSuccessors(estado)
 		for sucesor in sucesores:
 			if sucesor[0] not in visitados:

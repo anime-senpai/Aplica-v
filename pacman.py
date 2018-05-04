@@ -286,6 +286,8 @@ class ClassicGameRules:
         Checks to see whether it is time to end the game.
         """
         if state.getNumFood()==0 and self.initialState.getPacmanPosition() == state.getPacmanPosition():
+            state.data.scoreChange += 500
+            state.data._win = True
             self.win(state, game)
         if state.isLose(): self.lose(state, game)
 
@@ -367,9 +369,9 @@ class PacmanRules:
             state.data._foodEaten = position
             # TODO: cache numFood?
             numFood = state.getNumFood()
-            if numFood == 0 and not state.data._lose:
+            #if numFood == 0 and not state.data._lose:
                 state.data.scoreChange += 500
-                #state.data._win = True
+                state.data._win = True
         # Eat capsule
         if( position in state.getCapsules() ):
             state.data.capsules.remove( position )

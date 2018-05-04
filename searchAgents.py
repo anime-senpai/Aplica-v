@@ -363,6 +363,54 @@ class CornersProblem(search.SearchProblem):
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
+    def getSuccessors2(self, state):
+        """
+        Returns successor states, the actions they require, and a cost of 1.
+
+         As noted in search.py:
+            For a given state, this should return a list of triples, (successor,
+            action, stepCost), where 'successor' is a successor to the current
+            state, 'action' is the action required to get there, and 'stepCost'
+            is the incremental cost of expanding to that successor
+        """
+        successors = []
+        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            # Add a successor state to the successor list if the action is legal
+            # Here's a code snippet for figuring out whether a new position hits a wall:
+            #   x,y = currentPosition
+            #   dx, dy = Actions.directionToVector(action)
+            #   nextx, nexty = int(x + dx), int(y + dy)
+            #   hitsWall = self.walls[nextx][nexty]
+
+            "*** YOUR CODE HERE ***"
+            # current state
+            x,y = state[0]
+            cornerVisited = state[1]
+            # direction
+            dx,dy = Actions.directionToVector(action)
+            # new position
+            x_new,y_new = int(x + dx),int(y + dy)
+            # copy the 'center' point's corner visited list,note this is a deep copy since cornerVisited is a variable
+            cornerVisited_new = cornerVisited[:]
+            isWall = self.walls[x_new][y_new]
+            if not isWall:
+                cornerIndex = 0 # index of each corresponding corner in the corner list
+                # check if on of the corners is visited
+                for corner in self.corners:
+                    if (x_new,y_new) == corner:
+                        break
+                    cornerIndex += 1
+                if cornerIndex < 4: # is in one corner
+                    cornerVisited_new[cornerIndex] = False # update the corner visited list
+                if cornerVisited_new == [False,False,False,False,True] and (x_new,y_new) == self.startingPosition:
+                    cornerVisited_new[4] = False
+                state_new = ((x_new,y_new),cornerVisited_new)
+                cost = self.costFn(x_new,y_new)
+                successors.append((state_new,action,cost)) # add this successor
+
+        self._expanded += 1 # DO NOT CHANGE
+        return successors
+
     def getCostOfActions(self, actions):
         """
         Returns the cost of a particular sequence of actions.  If those actions
