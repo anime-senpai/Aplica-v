@@ -286,7 +286,6 @@ class ClassicGameRules:
         Checks to see whether it is time to end the game.
         """
         if state.getNumFood()==0 and self.initialState.getPacmanPosition() == state.getPacmanPosition():
-            state.data.scoreChange += 500
             state.data._win = True
             self.win(state, game)
         if state.isLose(): self.lose(state, game)
@@ -369,9 +368,9 @@ class PacmanRules:
             state.data._foodEaten = position
             # TODO: cache numFood?
             numFood = state.getNumFood()
-            #if numFood == 0 and not state.data._lose:
+            if numFood == 0 and not state.data._lose:
                 state.data.scoreChange += 500
-                state.data._win = True
+                #state.data._win = True
         # Eat capsule
         if( position in state.getCapsules() ):
             state.data.capsules.remove( position )
@@ -659,12 +658,12 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
 
     if (numGames-numTraining) > 0:
         scores = [game.state.getScore() for game in games]
-        loses = [game.state.isLose() for game in games]
-        winRate = loses.count(False)/ float(len(loses))
+        wins = [game.state.isWin() for game in games]
+        winRate = wins.count(True)/ float(len(wins))
         print 'Average Score:', sum(scores) / float(len(scores))
         print 'Scores:       ', ', '.join([str(score) for score in scores])
-        print 'Win Rate:      %d/%d (%.2f)' % (loses.count(False), len(loses), winRate)
-        print 'Record:       ', ', '.join([ ['Win', 'Loss'][int(w)] for w in loses])
+        print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
+	print 'Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins])
 
     return games
 

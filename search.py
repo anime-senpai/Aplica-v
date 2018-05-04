@@ -215,7 +215,7 @@ def BidirectionalSearch(problem):
 	visitadosIni.append(estadoInicial)
 
 	fronteraObj=util.Queue()
-	estadoObjetivo= (problem.startingPosition,[True,True,True,True,False])
+	estadoObjetivo= (problem.startingPosition,[True,True,True,True,True])
 	fronteraObj.push((estadoObjetivo, [],0))
 	visitadosObj=[]
 	visitadosObj.append(estadoObjetivo)
