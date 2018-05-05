@@ -478,100 +478,10 @@ def cornersHeuristic(state, problem):
 
     return H
 
-def h1(state, problem):
-    xAct, yAct = state[0]
-    ((x1,y1), (x2,y2), (x3, y3), (x4, y4)) = problem.corners
-    x = []
-    y = []
-    
-    x.append(x1)
-    x.append(x2)
-    x.append(x3)
-    x.append(x4)
-
-    y.append(y1)
-    y.append(y2)
-    y.append(y3)
-    y.append(y4)
-
-
-    distancia = []
-
-    dist1 = abs(xAct - x1) + abs (yAct - y1)
-    dist2 = abs(xAct - x2) + abs (yAct - y2)
-    dist3 = abs(xAct - x3) + abs (yAct - y3)
-    dist4 = abs(xAct - x4) + abs (yAct - y4)
-
-    esquinaVisitada = problem.cornerVisited
-
-    if(esquinaVisitada[0]):
-        distancia.append(dist1)
-
-    if(esquinaVisitada[1]):
-        distancia.append(dist2)
-
-    if(esquinaVisitada[2]):
-        distancia.append(dist3)
-
-    if(esquinaVisitada[3]):
-        distancia.append(dist4)
-
-    dist = []
-    dist.append(dist1)
-    dist.append(dist2)
-    dist.append(dist3)
-    dist.append(dist4)
-
-    if (distancia == []):
-        x5,y5 = problem.startingPosition
-        dist5 = abs(xAct - x5) + abs (yAct - y5)
-        return dist5
-
-    minimo = min(distancia)
-    pos = dist.index(minimo)
-
-    xIni = xAct
-    xFin = x[pos]
-
-    yIni = yAct
-    yFin = y[pos]
-
-    costMuro1 = 0
-    costMuro2 = 0
-
-    #buscar muros entre posicion inicial y esquina escogida por ambos caminos
-
-    while True:     
-        if(problem.walls[xIni][yIni]):
-            costMuro1+=5
-
-        if(problem.walls[xIni][yFin]):
-            costMuro2+=5        
-
-        if((xIni - xFin) == 0):
-            break
-
-        xIni = xIni - (xIni - xFin)/(abs(xIni - xFin))
-
-    while True:
-        if(problem.walls[xIni][yIni]):
-            costMuro1+=5
-
-        if(problem.walls[xFin][yIni]):
-            costMuro2+=5
-
-        if((xIni - xFin) == 0):
-            break
-
-        yIni = yIni - (yIni - yFin)/(abs(yIni - yFin))
-
-    
-    return min(costMuro2, costMuro1)
-
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
     def __init__(self):
-        self.searchFunction = lambda prob: search.aStarSearch(prob, h1)
+        self.searchFunction = lambda prob: search.aStarSearch(prob, cornersHeuristic)
         self.searchType = CornersProblem
 
 class FoodSearchProblem:

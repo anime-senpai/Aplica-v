@@ -202,8 +202,21 @@ def inFrontera(e,lista):
 	for i in range(len(lista)):
 		(estado, camino, costo)= lista[i]
 		if e[0]==estado[0] and e[1]==estado[1] :
-			return True
-	return False
+			return i+1
+	return 0
+
+def invertir(lista):
+	nueva_lista = []
+	for i in range(len(lista)):
+		if lista[i] =='North':
+			nueva_lista.append('South')
+		if lista[i] =='South':
+			nueva_lista.append('North')
+		if lista[i] =='East':
+			nueva_lista.append('West')
+		if lista[i] =='West':
+			nueva_lista.append('East')
+	return nueva_lista
 
 def BidirectionalSearch(problem):
 	from game import Directions
@@ -215,33 +228,37 @@ def BidirectionalSearch(problem):
 	visitadosIni.append(estadoInicial)
 
 	fronteraObj=util.Queue()
-	estadoObjetivo= (problem.startingPosition,[True,True,True,True,True])
+	estadoObjetivo= (problem.startingPosition,[True,True,True,True,False])
 	fronteraObj.push((estadoObjetivo, [],0))
 	visitadosObj=[]
 	visitadosObj.append(estadoObjetivo)
 
 	while not(fronteraIni.isEmpty()) and not(fronteraObj.isEmpty()):
-		(estado, camino, costo) =fronteraIni.pop()
-		if(problem.isGoalState(estado) and inFrontera(estado,fronteraObj.list)):
+		(estado1, camino1, costo) =fronteraIni.pop()
+		if inFrontera(estado1,fronteraObj.list):
+			(a,camino2,b) = fronteraObj.list[inFrontera(estado1,fronteraObj.list)-1]
 			break
 
-		sucesores=problem.getSuccessors(estado)
+		sucesores=problem.getSuccessors(estado1)
 		for sucesor in sucesores:
-			if sucesor[0] not in visitadosIni and sucesor not in fronteraIni.list:
-				fronteraIni.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
+			if sucesor[0] not in visitadosIni:
+				fronteraIni.push((sucesor[0], camino1 + [sucesor[1]], costo + sucesor[2]))
 				visitadosIni.append(sucesor[0])
 
-		(estado, camino, costo) =fronteraObj.pop()
-		if(estado[0]== problem.startingPosition and estado[1]==[False,False,False,False,False]) and inFrontera(estado,fronteraIni.list):
+		(estado, camino2, costo) =fronteraObj.pop()
+		if inFrontera(estado,fronteraIni.list):
+			(a,camino1,b) = fronteraIni.list[inFrontera(estado,fronteraIni.list)-1]
 			break
 
 		sucesores=problem.getSuccessors2(estado)
 		for sucesor in sucesores:
-			if sucesor[0] not in visitadosObj and sucesor not in fronteraObj.list:
-				fronteraObj.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
+			if sucesor[0] not in visitadosObj:
+				fronteraObj.push((sucesor[0], camino2 + [sucesor[1]], costo + sucesor[2]))
 				visitadosObj.append(sucesor[0])
-
-	return camino
+				
+	camino2.reverse()
+	camino2_inv= invertir(camino2)
+	return camino1 + camino2_inv
 
 def uniformCostSearch(problem):
 	"""Search the node of least total cost first."""
