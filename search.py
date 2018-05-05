@@ -324,3 +324,4 @@ dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
 it = iterativeDeepeningSearch
+bi = BidirectionalSearch
