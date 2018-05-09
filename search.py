@@ -104,14 +104,14 @@ def depthFirstSearch(problem):
 			if sucesor[0] not in visitados:
 				frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
 				visitados.append(sucesor[0])
-	print("cantidad de nodos en memoria: ", len(visitados))
+	#print ('Cantidad de nodos visitados: {}').format(len(camino))
 	return camino
 
 def breadthFirstSearch(problem):
 	"""Search the shallowest nodes in the search tree first."""
 	"*** YOUR CODE HERE ***"
 	from game import Directions
-
+	#i = 0
 	frontera=util.Queue()
 	estadoInicial= problem.getStartState()
 	frontera.push((estadoInicial, [],0))
@@ -125,10 +125,12 @@ def breadthFirstSearch(problem):
 
 		sucesores=problem.getSuccessors(estado)
 		for sucesor in sucesores:
+			#i = i+1
+			#print (i)
 			if sucesor[0] not in visitados:
 				frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
 				visitados.append(sucesor[0])
-	print("cantidad de nodos en memoria: ", len(visitados))
+	#print ('Cantidad de nodos visitados: {}').format(len(camino))
 	return camino
 
 '''def recursiveDLS(nodo, problem, limitee):
@@ -196,7 +198,7 @@ def iterativeDeepeningSearch(problem):
 			(estado,camino,costo) = frontera.pop()
 
 		if problem.isGoalState(estado):
-			print("cantidad de nodos en memoria: ", len(visitados))
+			#print ('Cantidad de nodos visitados: {}').format(len(camino))
 			return camino
 
 		limite += 1
@@ -261,7 +263,7 @@ def BidirectionalSearch(problem):
 				
 	camino2.reverse()
 	camino2_inv= invertir(camino2)
-	print("cantidad de nodos en memoria: ", len(visitadosIni) + len(visitadosObj))
+	#print ('Cantidad de nodos visitados: {}').format(len(camino1)+len(camino2))
 	return camino1 + camino2_inv
 
 def uniformCostSearch(problem):
@@ -316,7 +318,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 				frontera.push(nodoSuc, nodoSuc[1]+nodo[2])
 				#frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
 				visitados.append(sucesor[0])
-	print("cantidad de nodos en memoria: ", len(visitados))
+	#print ('Cantidad de nodos visitados: {}').format(len(camino))
 	return camino
 
 	#util.raiseNotDefined()

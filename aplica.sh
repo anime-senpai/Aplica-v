@@ -31,19 +31,19 @@ while true; do
 
 	if [ "$option" = "1" ]; then
 		if [ "$map" = "a" ]; then
+			python2 pacman.py -l tinyCorners -p SearchAgent -a fn=dfs,prob=CornersProblem
+		elif [ "$map" = "b" ]; then
+			python2 pacman.py -l mediumCorners -p SearchAgent -a fn=dfs,prob=CornersProblem
+		elif [ "$map" = "c" ]; then
+			python2 pacman.py -l bigCorners -p SearchAgent -a fn=dfs,prob=CornersProblem -z 0.75
+		fi
+	elif [ "$option" = "2" ]; then
+		if [ "$map" = "a" ]; then
 			python2 pacman.py -l tinyCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
 		elif [ "$map" = "b" ]; then
 			python2 pacman.py -l mediumCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
 		elif [ "$map" = "c" ]; then
 			python2 pacman.py -l bigCorners -p SearchAgent -a fn=bfs,prob=CornersProblem -z 0.75
-		fi
-	elif [ "$option" = "2" ]; then
-		if [ "$map" = "a" ]; then
-			python2 pacman.py -l tinyCorners -p SearchAgent -a fn=dfs,prob=CornersProblem
-		elif [ "$map" = "b" ]; then
-			python2 pacman.py -l mediumCorners -p SearchAgent -a fn=dfs,prob=CornersProblem
-		elif [ "$map" = "c" ]; then
-			python2 pacman.py -l bigCorners -p SearchAgent -a fn=dfs,prob=CornersProblem
 		fi
 	elif [ "$option" = "3" ]; then
 		if [ "$map" = "a" ]; then
@@ -51,7 +51,7 @@ while true; do
 		elif [ "$map" = "b" ]; then
 			python2 pacman.py -l mediumCorners -p SearchAgent -a fn=it,prob=CornersProblem
 		elif [ "$map" = "c" ]; then
-			python2 pacman.py -l bigCorners -p SearchAgent -a fn=it,prob=CornersProblem
+			python2 pacman.py -l bigCorners -p SearchAgent -a fn=it,prob=CornersProblem -z 0.75
 		fi
 	elif [ "$option" = "4" ]; then
 		if [ "$map" = "a" ]; then
@@ -59,7 +59,7 @@ while true; do
 		elif [ "$map" = "b" ]; then
 			python2 pacman.py -l mediumCorners -p SearchAgent -a fn=BidirectionalSearch,prob=CornersProblem
 		elif [ "$map" = "c" ]; then
-			python2 pacman.py -l bigCorners -p SearchAgent -a fn=BidirectionalSearch,prob=CornersProblem
+			python2 pacman.py -l bigCorners -p SearchAgent -a fn=BidirectionalSearch,prob=CornersProblem -z 0.75
 		fi
 	elif [ "$option" = "5" ]; then
 		if [ "$map" = "a" ]; then
@@ -67,7 +67,7 @@ while true; do
 		elif [ "$map" = "b" ]; then
 			python2 pacman.py -l mediumCorners -p AStarCornersAgent
 		elif [ "$map" = "c" ]; then
-			python2 pacman.py -l bigCorners -p AStarCornersAgent
+			python2 pacman.py -l bigCorners -p AStarCornersAgent -z 0.75
 		fi
 	elif [ "$option" = "6" ]; then
 		if [ "$map" = "a" ]; then
@@ -75,9 +75,10 @@ while true; do
 		elif [ "$map" = "b" ]; then
 			python2 pacman.py -l mediumCorners -p CornersGreedySearchAgent
 		elif [ "$map" = "c" ]; then
-			python2 pacman.py -l bigCorners -p CornersGreedySearchAgent
+			python2 pacman.py -l bigCorners -p CornersGreedySearchAgent -z 0.75
 		fi
 	else
 		echo "Ingrese una opción válida de la lista"
 	fi
+echo "-------------------------------------------------------------------------"
 done
