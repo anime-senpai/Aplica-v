@@ -281,9 +281,9 @@ class CornersProblem(search.SearchProblem):
         self.startingPosition = startingGameState.getPacmanPosition()
         top, right = self.walls.height-2, self.walls.width-2
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
-        for corner in self.corners:
-            if not startingGameState.hasFood(*corner):
-                print 'Warning: no food in corner ' + str(corner)
+        #for corner in self.corners:
+            #if not startingGameState.hasFood(*corner):
+                #print 'Warning: no food in corner ' + str(corner)
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
@@ -433,7 +433,7 @@ def h1(state, problem):
     ((x1,y1), (x2,y2), (x3, y3), (x4, y4)) = problem.corners
     x = []
     y = []
-    
+
     x.append(x1)
     x.append(x2)
     x.append(x3)
@@ -491,12 +491,12 @@ def h1(state, problem):
 
     #buscar muros entre posicion inicial y esquina escogida por ambos caminos
 
-    while True:     
+    while True:
         if(problem.walls[xIni][yIni]):
             costMuro1+=5
 
         if(problem.walls[xIni][yFin]):
-            costMuro2+=5        
+            costMuro2+=5
 
         if((xIni - xFin) == 0):
             break
@@ -515,7 +515,7 @@ def h1(state, problem):
 
         yIni = yIni - (yIni - yFin)/(abs(yIni - yFin))
 
-    
+
     return min(costMuro2, costMuro1)
 
 def cornersHeuristic(state, problem):
@@ -770,12 +770,12 @@ def mazeDistance(point1, point2, gameState):
 class CornersGreedySearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
     def registerInitialState(self,state):
-        
+
         corners_visited= [False,False,False,False,False]
         self.actions = []
         currentState= state
         true_startposition = state.getPacmanPosition()
-        
+
         while(not(corners_visited==[True,True,True,True,True])):
             nextPathSegment,new_corners = self.findPathToClosestDot(currentState,corners_visited,true_startposition) # The missing piece
             self.actions += nextPathSegment
@@ -785,9 +785,9 @@ class CornersGreedySearchAgent(SearchAgent):
                     t = (str(action), str(currentState))
                     raise Exception, 'findPathToClosestDot returned an illegal move: %s!\n%s' % t
                 currentState = currentState.generateSuccessor(0, action)
-            
-            
-            
+
+
+
         self.actionIndex = 0
         print 'Path found with cost %d.' % len(self.actions)
 
@@ -795,21 +795,20 @@ class CornersGreedySearchAgent(SearchAgent):
     	problem = CornersProblem(gameState)
     	frontera = util.Queue()
     	estado_ini= (gameState.getPacmanPosition(),corners_visited )
-    	
+
     	frontera.push((estado_ini, [],0))
     	visitados = []
     	visitados.append(estado_ini)
 
-    	
+
     	while(not(frontera.isEmpty())):
     		(estado,camino, costo) = frontera.pop()
     		if(estado[0] in problem.corners):
     			ind = problem.corners.index(estado[0])
     			if (corners_visited[ind]==False):
     				corners_visited[ind]=True
-    				print("corners")
     				break
-    			
+
     		if(estado[0]== true_startposition and estado[1] == [True,True,True,True,False] ):
     			corners_visited[4]=True
     			break
@@ -818,6 +817,5 @@ class CornersGreedySearchAgent(SearchAgent):
     			if sucesor[0] not in visitados:
     				frontera.push((sucesor[0],camino + [sucesor[1]],costo +sucesor[2] ))
     				visitados.append(sucesor[0])
-    	
+
     	return camino,estado[1]
-    
