@@ -318,7 +318,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 				frontera.push(nodoSuc, nodoSuc[1]+nodo[2])
 				#frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
 				visitados.append(sucesor[0])
-	print ('Cantidad de nodos en memoria: {}').format(len(frontera.list))
+	print ('Cantidad de nodos en memoria: {}').format(len(frontera.heap))
 	return camino
 
 	#util.raiseNotDefined()

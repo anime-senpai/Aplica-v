@@ -298,7 +298,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return self.startState # self.startState=(self.startingPosition,self.cornerState)
+        return self.startState
 
     def isGoalState(self, state):
         """
@@ -306,8 +306,6 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         cornerState = state[1]
-        #print state[0]
-        #print state[1]
         if cornerState == [True,True,True,True,True]:
             return True
         return False
@@ -333,31 +331,25 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
-            # current state
             x,y = state[0]
             cornerState = state[1]
-            # direction
             dx,dy = Actions.directionToVector(action)
-            # new position
-            x_new,y_new = int(x + dx),int(y + dy)
-            # copy the 'center' point's corner visited list,note this is a deep copy since cornerState is a variable
-            cornerState_new = cornerState[:]
-            isWall = self.walls[x_new][y_new]
-            if not isWall:
-                cornerIndex = 0 # index of each corresponding corner in the corner list
-                # check if on of the corners is visited
+            nextx,nexty = int(x + dx),int(y + dy)
+            cornerState1 = cornerState[:]
+            hitsWall = self.walls[nextx][nexty]
+            if not hitsWall:
+                cornerIndex = 0
                 for corner in self.corners:
-                    if (x_new,y_new) == corner:
+                    if (nextx,nexty) == corner:
                         break
                     cornerIndex += 1
-                if cornerIndex < 4: # is in one corner
-                    cornerState_new[cornerIndex] = True # update the corner visited list
-                if cornerState_new == [True,True,True,True,False] and (x_new,y_new) == self.startingPosition:
-                    cornerState_new[4] = True
-                state_new = ((x_new,y_new),cornerState_new)
-                cost = self.costFn(x_new,y_new)
-                successors.append((state_new,action,cost)) # add this successor
-
+                if cornerIndex < 4:
+                    cornerState1[cornerIndex] = True
+                if cornerState1 == [True,True,True,True,False] and (nextx,nexty) == self.startingPosition:
+                    cornerState1[4] = True
+                state_new = ((nextx,nexty),cornerState1)
+                cost = self.costFn(nextx,nexty)
+                successors.append((state_new,action,cost))
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -381,31 +373,25 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
-            # current state
             x,y = state[0]
             cornerState = state[1]
-            # direction
             dx,dy = Actions.directionToVector(action)
-            # new position
-            x_new,y_new = int(x + dx),int(y + dy)
-            # copy the 'center' point's corner visited list,note this is a deep copy since cornerState is a variable
-            cornerState_new = cornerState[:]
-            isWall = self.walls[x_new][y_new]
-            if not isWall:
-                cornerIndex = 0 # index of each corresponding corner in the corner list
-                # check if on of the corners is visited
+            nextx,nexty = int(x + dx),int(y + dy)
+            cornerState1 = cornerState[:]
+            hitsWall = self.walls[nextx][nexty]
+            if not hitsWall:
+                cornerIndex = 0
                 for corner in self.corners:
-                    if (x_new,y_new) == corner:
+                    if (nextx,nexty) == corner:
                         break
                     cornerIndex += 1
-                if cornerIndex < 4: # is in one corner
-                    cornerState_new[cornerIndex] = False # update the corner visited list
-                if cornerState_new == [False,False,False,False,True] and (x_new,y_new) == self.startingPosition:
-                    cornerState_new[4] = False
-                state_new = ((x_new,y_new),cornerState_new)
-                cost = self.costFn(x_new,y_new)
-                successors.append((state_new,action,cost)) # add this successor
-
+                if cornerIndex < 4:
+                    cornerState1[cornerIndex] = False
+                if cornerState1 == [False,False,False,False,True] and (nextx,nexty) == self.startingPosition:
+                    cornerState1[4] = False
+                state_new = ((nextx,nexty),cornerState1)
+                cost = self.costFn(nextx,nexty)
+                successors.append((state_new,action,cost))
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -415,13 +401,13 @@ class CornersProblem(search.SearchProblem):
         include an illegal move, return 999999.  This is implemented for you.
         """
         if actions == None: return 999999
-        x,y= self.startingPosition # from the starting point
+        x,y= self.startingPosition
         cost = 0
         for action in actions:
-            dx, dy = Actions.directionToVector(action) # direction of the action
-            x, y = int(x + dx), int(y + dy) # new position
-            if self.walls[x][y]: return 999999 # hit wall
-            cost += self.costFn(x,y) # add the cost on this new position
+            dx, dy = Actions.directionToVector(action)
+            x, y = int(x + dx), int(y + dy)
+            if self.walls[x][y]: return 999999
+            cost += self.costFn(x,y)
         return cost
 
 
@@ -528,39 +514,7 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    # Considering the goal is just a state with four corners visited, this Heuristic function simply calculate the total
-    # manhattan distance from the current position to the final state. First calculate the distance between the current
-    # position and the closest corner. Then calculate the distance between the first closest corner and the new closest
-    # corner until it reaches the state with four corners all visited.
-    H = 0
-    position = state[0][:] # deep copy of current position
-    visitedlist = state[1][:] # deep copy of current visited list
-    for i in range(4): # there remains at most 4 corners unvisited, so we need to go for four timrs
-        cornersDistance = [0,0,0,0]
-        cornerIndex = 0
-        # calculate the distance between the current position and each of the corners
-        for corner in visitedlist:
-            cornersDistance[cornerIndex] = util.manhattanDistance(position,corners[cornerIndex])
-            cornerIndex += 1
-
-        closestIndex = 0
-        cornerIndex = 0 # reset to 0
-        for cornerDiatance in cornersDistance:
-            if (visitedlist[closestIndex]): # in case the first corner is visited
-                closestIndex = cornerIndex
-            # check each corner: 1. not been visited 2. distance is less the current closest one => set to be the new closest one
-            if (not visitedlist[cornerIndex]) and (cornerDiatance < cornersDistance[closestIndex]):
-                closestIndex = cornerIndex
-            cornerIndex += 1
-
-        if (not visitedlist[closestIndex]):
-            H += cornersDistance[closestIndex]
-            position = corners[closestIndex][:]
-            visitedlist[closestIndex]=True
-        else:
-            break
-
-    return H
+    return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
