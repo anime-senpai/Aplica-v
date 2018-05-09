@@ -746,7 +746,8 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        #util.raiseNotDefined()
 
 def mazeDistance(point1, point2, gameState):
     """
@@ -765,3 +766,58 @@ def mazeDistance(point1, point2, gameState):
     assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
     prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
     return len(search.bfs(prob))
+
+class CornersGreedySearchAgent(SearchAgent):
+    "Search for all food using a sequence of searches"
+    def registerInitialState(self,state):
+        
+        corners_visited= [False,False,False,False,False]
+        self.actions = []
+        currentState= state
+        true_startposition = state.getPacmanPosition()
+        
+        while(not(corners_visited==[True,True,True,True,True])):
+            nextPathSegment,new_corners = self.findPathToClosestDot(currentState,corners_visited,true_startposition) # The missing piece
+            self.actions += nextPathSegment
+            for action in nextPathSegment:
+                legal = currentState.getLegalActions()
+                if action not in legal:
+                    t = (str(action), str(currentState))
+                    raise Exception, 'findPathToClosestDot returned an illegal move: %s!\n%s' % t
+                currentState = currentState.generateSuccessor(0, action)
+            
+            
+            
+        self.actionIndex = 0
+        print 'Path found with cost %d.' % len(self.actions)
+
+    def findPathToClosestDot(self, gameState,corners_visited,true_startposition):
+    	problem = CornersProblem(gameState)
+    	frontera = util.Queue()
+    	estado_ini= (gameState.getPacmanPosition(),corners_visited )
+    	
+    	frontera.push((estado_ini, [],0))
+    	visitados = []
+    	visitados.append(estado_ini)
+
+    	
+    	while(not(frontera.isEmpty())):
+    		(estado,camino, costo) = frontera.pop()
+    		if(estado[0] in problem.corners):
+    			ind = problem.corners.index(estado[0])
+    			if (corners_visited[ind]==False):
+    				corners_visited[ind]=True
+    				print("corners")
+    				break
+    			
+    		if(estado[0]== true_startposition and estado[1] == [True,True,True,True,False] ):
+    			corners_visited[4]=True
+    			break
+    		sucesores = problem.getSuccessors(estado)
+    		for sucesor in sucesores:
+    			if sucesor[0] not in visitados:
+    				frontera.push((sucesor[0],camino + [sucesor[1]],costo +sucesor[2] ))
+    				visitados.append(sucesor[0])
+    	
+    	return camino,estado[1]
+    
