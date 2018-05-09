@@ -104,6 +104,7 @@ def depthFirstSearch(problem):
 			if sucesor[0] not in visitados:
 				frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
 				visitados.append(sucesor[0])
+	print("cantidad de nodos en memoria: ", len(visitados))
 	return camino
 
 def breadthFirstSearch(problem):
@@ -127,6 +128,7 @@ def breadthFirstSearch(problem):
 			if sucesor[0] not in visitados:
 				frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
 				visitados.append(sucesor[0])
+	print("cantidad de nodos en memoria: ", len(visitados))
 	return camino
 
 '''def recursiveDLS(nodo, problem, limitee):
@@ -194,6 +196,7 @@ def iterativeDeepeningSearch(problem):
 			(estado,camino,costo) = frontera.pop()
 
 		if problem.isGoalState(estado):
+			print("cantidad de nodos en memoria: ", len(visitados))
 			return camino
 
 		limite += 1
@@ -258,6 +261,7 @@ def BidirectionalSearch(problem):
 				
 	camino2.reverse()
 	camino2_inv= invertir(camino2)
+	print("cantidad de nodos en memoria: ", len(visitadosIni) + len(visitadosObj))
 	return camino1 + camino2_inv
 
 def uniformCostSearch(problem):
@@ -312,6 +316,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 				frontera.push(nodoSuc, nodoSuc[1]+nodo[2])
 				#frontera.push((sucesor[0], camino + [sucesor[1]], costo + sucesor[2]))
 				visitados.append(sucesor[0])
+	print("cantidad de nodos en memoria: ", len(visitados))
 	return camino
 
 	#util.raiseNotDefined()
