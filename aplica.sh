@@ -1,6 +1,8 @@
 #!/bin/bash
 while true; do
 	echo
+	echo "-------------------------------------------------------------------------"
+	echo
 	echo "ALGORITMOS"
 	echo "1. Depth First Search - dfs"
 	echo "2. Breadth First Search - bfs"
@@ -8,6 +10,9 @@ while true; do
 	echo "4. Bidirectional search - bs"
 	echo "5. A* Search - astar"
 	echo "6. Greedy Search - gs"
+	echo "TODOS CONSECUTIVAMENTE EN UN MAPA"
+	echo "7. En mediumCorners"
+	echo "8. En bigCorners"
 	echo "0. SALIR"
 	echo
 	printf "Selecciones opcion para la ejecución (número + [ENTER]): "
@@ -16,6 +21,36 @@ while true; do
 	if [ "$option" = "0" ]; then
 		echo
 		exit 0
+	elif [ "$option" = "7" ]; then
+		echo
+		python2 pacman.py -l mediumCorners -p SearchAgent -a fn=dfs,prob=CornersProblem
+		echo
+		python2 pacman.py -l mediumCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
+		echo
+		python2 pacman.py -l mediumCorners -p SearchAgent -a fn=it,prob=CornersProblem
+		echo
+		python2 pacman.py -l mediumCorners -p SearchAgent -a fn=BidirectionalSearch,prob=CornersProblem
+		echo
+		python2 pacman.py -l mediumCorners -p AStarCornersAgent
+		echo
+		python2 pacman.py -l mediumCorners -p CornersGreedySearchAgent
+		echo
+		continue
+	elif [ "$option" = "8" ]; then
+		echo
+		python2 pacman.py -l bigCorners -p SearchAgent -a fn=dfs,prob=CornersProblem -z 0.6
+		echo
+		python2 pacman.py -l bigCorners -p SearchAgent -a fn=bfs,prob=CornersProblem -z 0.6
+		echo
+		python2 pacman.py -l bigCorners -p SearchAgent -a fn=it,prob=CornersProblem -z 0.6
+		echo
+		python2 pacman.py -l bigCorners -p SearchAgent -a fn=BidirectionalSearch,prob=CornersProblem -z 0.6
+		echo
+		python2 pacman.py -l bigCorners -p AStarCornersAgent -z 0.6
+		echo
+		python2 pacman.py -l bigCorners -p CornersGreedySearchAgent -z 0.6
+		echo
+		continue
 	fi
 
 	echo
@@ -80,5 +115,4 @@ while true; do
 	else
 		echo "Ingrese una opción válida de la lista"
 	fi
-echo "-------------------------------------------------------------------------"
 done
